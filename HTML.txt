@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egyptian Real Estate CRM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --secondary: #0f766e;
+            --dark: #134e4a;
+            --sand: #f5f1e6;
+            --desert: #d7ccc8;
+            --purple: #7e22ce;
+            --blue: #1d4ed8;
+        }
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0fdfa 0%, var(--sand) 100%);
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .dashboard-card {
+            box-shadow: 0 4px 20px rgba(13, 148, 136, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+        
+        .timeline-item:after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            width: 2px;
+            height: calc(100% - 14px);
+            background: #cbd5e1;
+        }
+        
+        .timeline-item:last-child:after {
+            display: none;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .lead-row:hover {
+            background-color: #f0fdfa;
+            transform: translateY(-2px);
+        }
+        
+        .sidebar-toggle {
+            display: none;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .role-selection {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .role-card {
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .role-card:hover {
+            border-color: var(--primary);
+            background-color: #f0fdfa;
+        }
+        
+        .role-card.selected {
+            border-color: var(--primary);
+            background-color: #f0fdfa;
+            box-shadow: 0 4px 6px rgba(13, 148, 136, 0.1);
+        }
+        
+        .role-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #6b7280;
+        }
+        
+        .role-card.selected i {
+            color: var(--primary);
+        }
+        
+        .admin-code-field {
+            position: relative;
+        }
+        
+        .admin-code-field i {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+        
+        .icon-hover:hover {
+            transform: scale(1.1);
+            color: var(--primary);
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #f0fdfa;
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .nav-item:hover i, .nav-item.active i {
+            color: var(--primary);
+        }
+        
+        .lead-detail-card {
+            border-left: 4px solid var(--primary);
+            background-color: #f0fdfa;
+        }
+        
+        .metric-card {
+            transition: all 0.3s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .calendar-day {
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .calendar-day:hover {
+            background-color: #e0f2f1;
+        }
+        
+        .calendar-day.has-event {
+            background-color: #b2f5ea;
+        }
+        
+        .performance-bar {
+            height: 24px;
+            border-radius: 12px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .performance-fill {
+            height: 100%;
+            border-radius: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                z-index: 50;
+                height: 100vh;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 60;
+                background: var(--primary);
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            }
+            
+            .role-selection {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="bg-sand min-h-screen flex flex-col">
+    <!-- Auth Container -->
+    <div id="auth-container" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
+            <div class="text-center mb-8">
+                <div class="mx-auto bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-white font-bold text-xl">ER</span>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800">Egyptian Realty CRM</h1>
+                <p class="text-gray-600 mt-2">Premium Real Estate Management</p>
+            </div>
+            
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="login-tab">Login</div>
+                <div class="auth-tab" id="signup-tab">Sign Up</div>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Email</label>
+                    <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <input type="password" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition font-medium">
+                    Login to Dashboard
+                </button>
+            </form>
+            
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form hidden">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Full Name</label>
+                    <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Email</label>
+                    <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <input type="password" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Create a password" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Confirm Password</label>
+                    <input type="password" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Confirm your password" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Select Role</label>
+                    <div class="role-selection">
+                        <div class="role-card" data-role="marketing">
+                            <i class="fas fa-bullhorn"></i>
+                            <h3 class="font-bold">Marketing</h3>
+                            <p class="text-sm text-gray-600">Add leads & run campaigns</p>
+                        </div>
+                        <div class="role-card" data-role="sales">
+                            <i class="fas fa-user-tie"></i>
+                            <h3 class="font-bold">Sales</h3>
+                            <p class="text-sm text-gray-600">Manage leads & close deals</p>
+                        </div>
+                        <div class="role-card" data-role="admin">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3 class="font-bold">Admin</h3>
+                            <p class="text-sm text-gray-600">Full system access</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="admin-code-section" class="mb-4 hidden">
+                    <label class="block text-gray-700 mb-2">Admin Security Code</label>
+                    <div class="admin-code-field">
+                        <input type="password" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Enter admin security code" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Only authorized admins can create admin accounts</p>
+                </div>
+                
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary font-medium">
+                    Create Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="page min-h-screen">
+        <button class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="flex flex-1">
+            <!-- Sidebar -->
+            <div class="sidebar bg-white shadow-lg h-full w-64 fixed md:relative z-50">
+                <div class="p-5 border-b">
+                    <div class="flex items-center">
+                        <div class="bg-primary w-10 h-10 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">ER</span>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">Egyptian Realty CRM</h2>
+                            <p class="text-xs text-gray-500">Admin Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <nav class="mt-6 px-3">
+                    <a href="#" class="nav-item flex items-center p-3 text-primary bg-teal-50 rounded-lg mb-2 active" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt w-6 text-center"></i>
+                        <span class="ml-3 font-medium">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-lg mb-2" data-page="leads">
+                        <i class="fas fa-users w-6 text-center"></i>
+                        <span class="ml-3">Leads</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-lg mb-2" data-page="users">
+                        <i class="fas fa-user-plus w-6 text-center"></i>
+                        <span class="ml-3">User Management</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-lg mb-2" data-page="performance">
+                        <i class="fas fa-chart-line w-6 text-center"></i>
+                        <span class="ml-3">Performance</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-lg mb-2" data-page="calendar">
+                        <i class="fas fa-calendar-alt w-6 text-center"></i>
+                        <span class="ml-3">Calendar</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-lg mb-2" data-page="campaigns">
+                        <i class="fas fa-bullhorn w-6 text-center"></i>
+                        <span class="ml-3">Campaigns</span>
+                    </a>
+                </nav>
+                
+                <div class="absolute bottom-0 w-full p-4 border-t bg-white">
+                    <div class="flex items-center">
+                        <div class="user-avatar bg-primary" id="admin-avatar">
+                            AU
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium" id="admin-name">Admin User</p>
+                            <p class="text-xs text-gray-500">Admin</p>
+                        </div>
+                        <button class="ml-auto text-gray-500 hover:text-gray-700" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1 overflow-auto md:ml-0">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <header class="bg-white shadow-sm py-4 px-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
+                                <p class="text-sm text-gray-600">Welcome back, manage your real estate leads</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="relative">
+                                    <button class="text-gray-500 hover:text-gray-700 relative" id="notification-btn">
+                                        <i class="fas fa-bell text-xl"></i>
+                                        <span class="notification-badge">3</span>
+                                    </button>
+                                    <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-50">
+                                        <div class="p-3 border-b">
+                                            <h3 class="font-medium">Notifications</h3>
+                                        </div>
+                                        <div class="max-h-60 overflow-y-auto">
+                                            <div class="p-3 border-b hover:bg-gray-50">
+                                                <p class="font-medium">New Lead Added</p>
+                                                <p class="text-sm text-gray-600">Ahmed Mahmoud added a new lead</p>
+                                                <p class="text-xs text-gray-400 mt-1">10:30 AM</p>
+                                            </div>
+                                            <div class="p-3 border-b hover:bg-gray-50">
+                                                <p class="font-medium">Lead Assigned</p>
+                                                <p class="text-sm text-gray-600">Sara Ali assigned to Mohamed Ahmed</p>
+                                                <p class="text-xs text-gray-400 mt-1">9:45 AM</p>
+                                            </div>
+                                            <div class="p-3 hover:bg-gray-50">
+                                                <p class="font-medium">Task Completed</p>
+                                                <p class="text-sm text-gray-600">Sarah Jones completed site visit task</p>
+                                                <p class="text-xs text-gray-400 mt-1">Yesterday, 4:20 PM</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Dashboard Content -->
+                    <main class="p-4 md:p-6">
+                        <!-- Stats Overview -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Total Leads</p>
+                                        <p class="text-2xl font-bold mt-1">24</p>
+                                    </div>
+                                    <div class="bg-blue-100 p-3 rounded-full">
+                                        <i class="fas fa-users text-blue-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up mr-1"></i>12% from last month
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Pending Leads</p>
+                                        <p class="text-2xl font-bold mt-1">5</p>
+                                    </div>
+                                    <div class="bg-yellow-100 p-3 rounded-full">
+                                        <i class="fas fa-exclamation-circle text-yellow-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Require assignment</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Active Sales</p>
+                                        <p class="text-2xl font-bold mt-1">8</p>
+                                    </div>
+                                    <div class="bg-green-100 p-3 rounded-full">
+                                        <i class="fas fa-user-tie text-green-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up mr-1"></i>2 new
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Conversion Rate</p>
+                                        <p class="text-2xl font-bold mt-1">42%</p>
+                                    </div>
+                                    <div class="bg-purple-100 p-3 rounded-full">
+                                        <i class="fas fa-percent text-purple-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up mr-1"></i>7% improvement
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Leads Section -->
+                        <div class="dashboard-card bg-white mb-6">
+                            <div class="border-b p-4 flex justify-between items-center">
+                                <h2 class="font-bold text-gray-800 text-lg">Pending Leads</h2>
+                                <span class="text-sm text-primary">5 new leads to assign</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lead</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added By</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Added</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr class="hover:bg-gray-50 lead-row">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            <img src="https://ui-avatars.com/api/?name=Ahmed+Mohamed&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">Ahmed Mohamed</div>
+                                                            <div class="text-sm text-gray-500">+20 123 456 7890</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    <div>Villa in New Cairo</div>
+                                                    <div class="text-gray-500">5M EGP</div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-800 text-xs">
+                                                            MH
+                                                        </div>
+                                                        <div class="ml-2">Marketing User</div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    Today, 10:30 AM
+                                                </td>
+                                                <td class="px-4 py-3 text-sm">
+                                                    <button class="text-primary font-medium hover:text-secondary assign-btn">
+                                                        Assign to Sales
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50 lead-row">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            <img src="https://ui-avatars.com/api/?name=Sara+Ali&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">Sara Ali</div>
+                                                            <div class="text-sm text-gray-500">+20 112 233 4455</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    <div>Apartment in 6th October</div>
+                                                    <div class="text-gray-500">2.5M EGP</div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-800 text-xs">
+                                                            MH
+                                                        </div>
+                                                        <div class="ml-2">Marketing User</div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    Today, 09:15 AM
+                                                </td>
+                                                <td class="px-4 py-3 text-sm">
+                                                    <button class="text-primary font-medium hover:text-secondary assign-btn">
+                                                        Assign to Sales
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team Performance -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg">Team Performance</h2>
+                                </div>
+                                <div class="p-4">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Sarah Jones</span>
+                                                <span class="text-sm text-gray-500">78%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 78%"></div>
+                                            </div>
+                                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                                <span>12/15 tasks completed</span>
+                                                <span>5 deals closed</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Mohamed Ahmed</span>
+                                                <span class="text-sm text-gray-500">65%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 65%"></div>
+                                            </div>
+                                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                                <span>8/12 tasks completed</span>
+                                                <span>3 deals closed</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Amira Hassan</span>
+                                                <span class="text-sm text-gray-500">92%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 92%"></div>
+                                            </div>
+                                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                                <span>11/12 tasks completed</span>
+                                                <span>7 deals closed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg">Recent Activity</h2>
+                                </div>
+                                <div class="p-4 max-h-96 overflow-y-auto">
+                                    <div class="timeline">
+                                        <div class="timeline-item">
+                                            <p class="font-medium">New lead added by Marketing</p>
+                                            <p class="text-sm text-gray-500">Ahmed Mahmoud added a new lead</p>
+                                            <p class="text-xs text-gray-400 mt-1">10:30 AM</p>
+                                        </div>
+                                        <div class="timeline-item">
+                                            <p class="font-medium">Lead assigned to Sales</p>
+                                            <p class="text-sm text-gray-500">Sara Ali assigned to Mohamed Ahmed</p>
+                                            <p class="text-xs text-gray-400 mt-1">9:45 AM</p>
+                                        </div>
+                                        <div class="timeline-item">
+                                            <p class="font-medium">Task completed</p>
+                                            <p class="text-sm text-gray-500">Sarah Jones completed site visit task</p>
+                                            <p class="text-xs text-gray-400 mt-1">Yesterday, 4:20 PM</p>
+                                        </div>
+                                        <div class="timeline-item">
+                                            <p class="font-medium">New user created</p>
+                                            <p class="text-sm text-gray-500">Created new sales account for Tarek Mohamed</p>
+                                            <p class="text-xs text-gray-400 mt-1">Yesterday, 2:15 PM</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+                
+                <!-- Leads Page -->
+                <div id="leads-page" class="page">
+                    <header class="bg-white shadow-sm py-4 px-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">Leads Management</h1>
+                                <p class="text-sm text-gray-600">View and manage all leads</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm hover:bg-gray-300" id="back-to-dashboard">
+                                    <i class="fas fa-arrow-left mr-2"></i>Back
+                                </button>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary">
+                                    <i class="fas fa-plus mr-2"></i>Add Lead
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2">
+                                <div class="bg-white rounded-xl shadow overflow-hidden">
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lead</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200" id="leads-table">
+                                                <tr class="hover:bg-gray-50 lead-row cursor-pointer" data-lead="1">
+                                                    <td class="px-6 py-4">
+                                                        <div class="flex items-center">
+                                                            <div class="flex-shrink-0 h-10 w-10">
+                                                                <img src="https://ui-avatars.com/api/?name=Ahmed+Mohamed&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                            </div>
+                                                            <div class="ml-4">
+                                                                <div class="text-sm font-medium text-gray-900">Ahmed Mohamed</div>
+                                                                <div class="text-sm text-gray-500">New Cairo</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                                        +20 123 456 7890
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <div class="text-sm text-gray-900">Villa</div>
+                                                        <div class="text-sm text-gray-500">5M EGP</div>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                            New
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm">
+                                                        <button class="text-primary font-medium hover:text-secondary">
+                                                            View Details
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr class="hover:bg-gray-50 lead-row cursor-pointer" data-lead="2">
+                                                    <td class="px-6 py-4">
+                                                        <div class="flex items-center">
+                                                            <div class="flex-shrink-0 h-10 w-10">
+                                                                <img src="https://ui-avatars.com/api/?name=Sara+Ali&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                            </div>
+                                                            <div class="ml-4">
+                                                                <div class="text-sm font-medium text-gray-900">Sara Ali</div>
+                                                                <div class="text-sm text-gray-500">6th October</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                                        +20 112 233 4455
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <div class="text-sm text-gray-900">Apartment</div>
+                                                        <div class="text-sm text-gray-500">2.5M EGP</div>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                            Contacted
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm">
+                                                        <button class="text-primary font-medium hover:text-secondary">
+                                                            View Details
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="lg:col-span-1">
+                                <div class="dashboard-card bg-white">
+                                    <div class="border-b p-4 flex justify-between items-center">
+                                        <h2 class="font-bold text-gray-800 text-lg">Lead Details</h2>
+                                        <span class="text-sm text-primary">Select a lead to view details</span>
+                                    </div>
+                                    <div class="p-4">
+                                        <div id="lead-detail-placeholder" class="text-center py-12 text-gray-500">
+                                            <i class="fas fa-user-circle text-4xl mb-3"></i>
+                                            <p>Select a lead to view details</p>
+                                        </div>
+                                        <div id="lead-detail-content" class="hidden">
+                                            <div class="lead-detail-card p-4 mb-4">
+                                                <div class="flex justify-between items-center mb-3">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-12 w-12">
+                                                            <img src="https://ui-avatars.com/api/?name=Ahmed+Mohamed&background=0d9488&color=fff" class="h-12 w-12 rounded-full">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-lg font-medium text-gray-900">Ahmed Mohamed</div>
+                                                            <div class="text-sm text-gray-500">New Cairo</div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        New
+                                                    </span>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Phone</p>
+                                                        <p class="font-medium">+20 123 456 7890</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Email</p>
+                                                        <p class="font-medium">ahmed@example.com</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Property</p>
+                                                        <p class="font-medium">Villa (5M EGP)</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Budget</p>
+                                                        <p class="font-medium">5-6M EGP</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Added By</p>
+                                                        <p class="font-medium">Marketing User</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Assigned To</p>
+                                                        <p class="font-medium">Sarah Jones</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Date Added</p>
+                                                        <p class="font-medium">Jun 12, 2023</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Last Contact</p>
+                                                        <p class="font-medium">Today, 10:30 AM</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="mb-4">
+                                                    <p class="text-sm text-gray-500 mb-1">Notes</p>
+                                                    <p class="text-gray-700">Interested in a villa with pool and garden. Prefers New Cairo area. Wants to visit properties next week.</p>
+                                                </div>
+                                                
+                                                <div class="flex space-x-2">
+                                                    <button class="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-secondary">
+                                                        <i class="fas fa-phone mr-2"></i>Call
+                                                    </button>
+                                                    <button class="flex-1 bg-gray-100 text-gray-800 py-2 rounded-lg hover:bg-gray-200">
+                                                        <i class="fas fa-envelope mr-2"></i>Email
+                                                    </button>
+                                                    <button class="flex-1 bg-gray-100 text-gray-800 py-2 rounded-lg hover:bg-gray-200">
+                                                        <i class="fas fa-tasks mr-2"></i>Task
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Management Page -->
+                <div id="users-page" class="page">
+                    <header class="bg-white shadow-sm py-4 px-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
+                                <p class="text-sm text-gray-600">Create and manage team accounts</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary" id="create-user-btn">
+                                    <i class="fas fa-plus mr-2"></i>Create User
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Sales Team -->
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg flex items-center">
+                                        <i class="fas fa-user-tie mr-2 text-primary"></i>
+                                        Sales Team
+                                    </h2>
+                                </div>
+                                <div class="p-4 space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="user-avatar bg-primary">
+                                                SJ
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="font-medium">Sarah Jones</p>
+                                                <p class="text-xs text-gray-500">Active</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">78%</p>
+                                            <p class="text-xs text-gray-500">Performance</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="user-avatar bg-blue-500">
+                                                MA
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="font-medium">Mohamed Ahmed</p>
+                                                <p class="text-xs text-gray-500">Active</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">65%</p>
+                                            <p class="text-xs text-gray-500">Performance</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="user-avatar bg-green-500">
+                                                TM
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="font-medium">Tarek Mohamed</p>
+                                                <p class="text-xs text-gray-500">New</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">42%</p>
+                                            <p class="text-xs text-gray-500">Performance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Marketing Team -->
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg flex items-center">
+                                        <i class="fas fa-bullhorn mr-2 text-purple-500"></i>
+                                        Marketing Team
+                                    </h2>
+                                </div>
+                                <div class="p-4 space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="user-avatar bg-purple-500">
+                                                MH
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="font-medium">Marketing User</p>
+                                                <p class="text-xs text-gray-500">Active</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">24</p>
+                                            <p class="text-xs text-gray-500">Leads added</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="user-avatar bg-yellow-500">
+                                                AA
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="font-medium">Ahmed Ali</p>
+                                                <p class="text-xs text-gray-500">Active</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">18</p>
+                                            <p class="text-xs text-gray-500">Leads added</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Create New User -->
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg flex items-center">
+                                        <i class="fas fa-user-plus mr-2 text-green-500"></i>
+                                        Create New User
+                                    </h2>
+                                </div>
+                                <div class="p-4">
+                                    <form id="create-user-form">
+                                        <div class="mb-4">
+                                            <label class="block text-gray-700 mb-2">Full Name</label>
+                                            <input type="text" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Enter full name" required>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="block text-gray-700 mb-2">Email</label>
+                                            <input type="email" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" placeholder="user@example.com" required>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="block text-gray-700 mb-2">Role</label>
+                                            <select class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" required>
+                                                <option value="">Select role</option>
+                                                <option value="sales">Sales</option>
+                                                <option value="marketing">Marketing</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="block text-gray-700 mb-2">Temporary Password</label>
+                                            <input type="password" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none" value="TempPass123" readonly>
+                                        </div>
+                                        
+                                        <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary font-medium">
+                                            Create Account
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance Page -->
+                <div id="performance-page" class="page">
+                    <header class="bg-white shadow-sm py-4 px-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">Performance Analytics</h1>
+                                <p class="text-sm text-gray-600">Team and individual performance metrics</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm hover:bg-gray-300" id="back-to-dashboard">
+                                    <i class="fas fa-arrow-left mr-2"></i>Back
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <div class="p-6">
+                        <!-- Overall Metrics -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Closed Deals</p>
+                                        <p class="text-2xl font-bold mt-1">18</p>
+                                    </div>
+                                    <div class="bg-green-100 p-3 rounded-full">
+                                        <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up mr-1"></i>22% from last month
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Canceled Deals</p>
+                                        <p class="text-2xl font-bold mt-1">4</p>
+                                    </div>
+                                    <div class="bg-red-100 p-3 rounded-full">
+                                        <i class="fas fa-times-circle text-red-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-down mr-1"></i>2 from last month
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Conversion Rate</p>
+                                        <p class="text-2xl font-bold mt-1">42%</p>
+                                    </div>
+                                    <div class="bg-purple-100 p-3 rounded-full">
+                                        <i class="fas fa-percent text-purple-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up mr-1"></i>7% improvement
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white p-5 metric-card">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-gray-500">Avg. Deal Value</p>
+                                        <p class="text-2xl font-bold mt-1">3.2M EGP</p>
+                                    </div>
+                                    <div class="bg-blue-100 p-3 rounded-full">
+                                        <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center">
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up mr-1"></i>400K EGP
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Team Performance -->
+                        <div class="dashboard-card bg-white mb-6">
+                            <div class="border-b p-4">
+                                <h2 class="font-bold text-gray-800 text-lg">Team Performance</h2>
+                            </div>
+                            <div class="p-4">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team Member</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leads</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Closed</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Canceled</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            <img src="https://ui-avatars.com/api/?name=Sarah+Jones&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">Sarah Jones</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    Sales
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    12
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    5
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    1
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="performance-bar">
+                                                        <div class="performance-fill bg-green-500" style="width: 78%"></div>
+                                                    </div>
+                                                    <div class="text-right text-xs mt-1">78%</div>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            <img src="https://ui-avatars.com/api/?name=Mohamed+Ahmed&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">Mohamed Ahmed</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    Sales
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    8
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    3
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    1
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="performance-bar">
+                                                        <div class="performance-fill bg-blue-500" style="width: 65%"></div>
+                                                    </div>
+                                                    <div class="text-right text-xs mt-1">65%</div>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10">
+                                                            <img src="https://ui-avatars.com/api/?name=Marketing+User&background=0d9488&color=fff" class="h-10 w-10 rounded-full">
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">Marketing User</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    Marketing
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    24
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    18
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    2
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="performance-bar">
+                                                        <div class="performance-fill bg-purple-500" style="width: 75%"></div>
+                                                    </div>
+                                                    <div class="text-right text-xs mt-1">75%</div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Performance Charts -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg">Deal Progress</h2>
+                                </div>
+                                <div class="p-4">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">New Leads</span>
+                                                <span class="text-sm text-gray-500">24</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-blue-500" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Contacted</span>
+                                                <span class="text-sm text-gray-500">18</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-yellow-500" style="width: 75%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Site Visits</span>
+                                                <span class="text-sm text-gray-500">12</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-purple-500" style="width: 50%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Negotiation</span>
+                                                <span class="text-sm text-gray-500">8</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-orange-500" style="width: 33%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Closed Deals</span>
+                                                <span class="text-sm text-gray-500">5</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-green-500" style="width: 21%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-card bg-white">
+                                <div class="border-b p-4">
+                                    <h2 class="font-bold text-gray-800 text-lg">Revenue by Property Type</h2>
+                                </div>
+                                <div class="p-4">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Villas</span>
+                                                <span class="text-sm text-gray-500">12.5M EGP</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-primary" style="width: 65%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Apartments</span>
+                                                <span class="text-sm text-gray-500">5.2M EGP</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-blue-500" style="width: 27%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Commercial</span>
+                                                <span class="text-sm text-gray-500">3.8M EGP</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-purple-500" style="width: 20%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium">Land</span>
+                                                <span class="text-sm text-gray-500">1.5M EGP</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill bg-yellow-500" style="width: 8%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar Page -->
+                <div id="calendar-page" class="page">
+                    <header class="bg-white shadow-sm py-4 px-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-800">Calendar</h1>
+                                <p class="text-sm text-gray-600">View appointments and schedules</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm hover:bg-gray-300" id="back-to-dashboard">
+                                    <i class="fas fa-arrow-left mr-2"></i>Back
+                                </button>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary">
+                                    <i class="fas fa-plus mr-2"></i>Add Event
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <div class="p-6">
+                        <div class="dashboard-card bg-white">
+                            <div class="p-4">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-xl font-bold text-gray-800">June 2023</h2>
+                                    <div class="flex space-x-2">
+                                        <button class="p-2 rounded-full hover:bg-gray-100">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button class="p-2 rounded-full hover:bg-gray-100">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-7 gap-1 mb-2">
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Sun</div>
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Mon</div>
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Tue</div>
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Wed</div>
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Thu</div>
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Fri</div>
+                                    <div class="text-center py-2 text-sm font-medium text-gray-500">Sat</div>
+                                </div>
+                                
+                                <div class="grid grid-cols-7 gap-1">
+                                    <!-- Calendar days -->
+                                    <div class="text-center py-2 text-sm text-gray-400">28</div>
+                                    <div class="text-center py-2 text-sm text-gray-400">29</div>
+                                    <div class="text-center py-2 text-sm text-gray-400">30</div>
+                                    <div class="text-center py-2 text-sm text-gray-400">31</div>
+                                    <div class="text-center py-2 text-sm calendar-day">1</div>
+                                    <div class="text-center py-2 text-sm calendar-day">2</div>
+                                    <div class="text-center py-2 text-sm calendar-day">3</div>
+                                    
+                                    <div class="text-center py-2 text-sm calendar-day">4</div>
+                                    <div class="text-center py-2 text-sm calendar-day">5</div>
+                                    <div class="text-center py-2 text-sm calendar-day">6</div>
+                                    <div class="text-center py-2 text-sm calendar-day">7</div>
+                                    <div class="text-center py-2 text-sm calendar-day">8</div>
+                                    <div class="text-center py-2 text-sm calendar-day">9</div>
+                                    <div class="text-center py-2 text-sm calendar-day">10</div>
+                                    
+                                    <div class="text-center py-2 text-sm calendar-day">11</div>
+                                    <div class="text-center py-2 text-sm calendar-day">12</div>
+                                    <div class="text-center py-2 text-sm calendar-day has-event">13</div>
+                                    <div class="text-center py-2 text-sm calendar-day">14</div>
+                                    <div class="text-center py-2 text-sm calendar-day">15</div>
+                                    <div class="text-center py-2 text-sm calendar-day">16</div>
+                                    <div class="text-center py-2 text-sm calendar-day">17</div>
+                                    
+                                    <div class="text-center py-2 text-sm calendar-day">18</div>
+                                    <div class="text-center py-2 text-sm calendar-day">19</div>
+                                    <div class="text-center py-2 text-sm calendar-day">20</div>
+                                    <div class="text-center py-2 text-sm calendar-day">21</div>
+                                    <div class="text-center py-2 text-sm calendar-day">22</div>
+                                    <div class="text-center py-2 text-sm calendar-day has-event">23</div>
+                                    <div class="text-center py-2 text-sm calendar-day">24</div>
+                                    
+                                    <div class="text-center py-2 text-sm calendar-day">25</div>
+                                    <div class="text-center py-2 text-sm calendar-day">26</div>
+                                    <div class="text-center py-2 text-sm calendar-day">27</div>
+                                    <div class="text-center py-2 text-sm calendar-day">28</div>
+                                    <div class="text-center py-2 text-sm calendar-day has-event">29</div>
+                                    <div class="text-center py-2 text-sm calendar-day">30</div>
+                                    <div class="text-center py-2 text-sm text-gray-400">1</div>
+                                </div>
+                                
+                                <div class="mt-6">
+                                    <h3 class="font-medium text-lg mb-3">Today's Events</h3>
+                                    <div class="space-y-3">
+                                        <div class="p-3 border-l-4 border-primary bg-blue-50 rounded-r-lg">
+                                            <p class="font-medium">Meeting with Ahmed Mohamed</p>
+                                            <p class="text-sm text-gray-600">New Cairo Villa Tour</p>
+                                            <p class="text-xs text-gray-500 mt-1 flex items-center">
+                                                <i class="far fa-clock mr-1"></i>3:00 PM - 4:30 PM
+                                            </p>
+                                        </div>
+                                        <div class="p-3 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
+                                            <p class="font-medium">Contract Signing</p>
+                                            <p class="text-sm text-gray-600">Sara Ali - 6th October Apartment</p>
+                                            <p class="text-xs text-gray-500 mt-1 flex items-center">
+                                                <i class="far fa-clock mr-1"></i>5:00 PM - 6:00 PM
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated database
+        const users = JSON.parse(localStorage.getItem('crm_users')) || [];
+        const leads = JSON.parse(localStorage.getItem('crm_leads')) || [];
+        const adminCode = "ADMIN2023"; // Secret admin code
+        
+        // DOM Elements
+        const authContainer = document.getElementById('auth-container');
+        const loginTab = document.getElementById('login-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const adminCodeSection = document.getElementById('admin-code-section');
+        const roleCards = document.querySelectorAll('.role-card');
+        let selectedRole = null;
+        let currentUser = null;
+
+        // Auth Tabs
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            signupTab.classList.remove('active');
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+        });
+
+        signupTab.addEventListener('click', () => {
+            signupTab.classList.add('active');
+            loginTab.classList.remove('active');
+            signupForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        });
+
+        // Role Selection
+        roleCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Reset selection
+                roleCards.forEach(c => c.classList.remove('selected'));
+                
+                // Set new selection
+                card.classList.add('selected');
+                selectedRole = card.getAttribute('data-role');
+                
+                // Show admin code field only for admin role
+                if (selectedRole === 'admin') {
+                    adminCodeSection.classList.remove('hidden');
+                } else {
+                    adminCodeSection.classList.add('hidden');
+                }
+            });
+        });
+
+        // Signup Form Submission
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = this.querySelector('input[type="text"]').value;
+            const email = this.querySelector('input[type="email"]').value;
+            const password = this.querySelectorAll('input[type="password"]')[0].value;
+            const confirmPassword = this.querySelectorAll('input[type="password"]')[1].value;
+            
+            // Validation
+            if (!selectedRole) {
+                showNotification("Please select a role", "error");
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification("Passwords do not match", "error");
+                return;
+            }
+            
+            if (selectedRole === 'admin') {
+                const adminCodeInput = this.querySelector('#admin-code-section input').value;
+                if (adminCodeInput !== adminCode) {
+                    showNotification("Invalid admin security code", "error");
+                    return;
+                }
+            }
+            
+            // Check if user already exists
+            if (users.some(user => user.email === email)) {
+                showNotification("Account with this email already exists", "error");
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                password,
+                role: selectedRole,
+                createdAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('crm_users', JSON.stringify(users));
+            
+            showNotification("Account created successfully! Please login", "success");
+            loginTab.click();
+            this.reset();
+            roleCards.forEach(c => c.classList.remove('selected'));
+            selectedRole = null;
+        });
+
+        // Login Form Submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = this.querySelector('input[type="email"]').value;
+            const password = this.querySelector('input[type="password"]').value;
+            
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (!user) {
+                showNotification("Invalid email or password", "error");
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Hide auth container
+            authContainer.style.display = 'none';
+            
+            // Show appropriate dashboard based on role
+            if (user.role === 'admin') {
+                document.getElementById('admin-dashboard').classList.add('active');
+                updateAdminDashboard(user);
+            } else if (user.role === 'marketing') {
+                document.getElementById('marketing-dashboard').classList.add('active');
+                updateMarketingDashboard(user);
+            } else if (user.role === 'sales') {
+                document.getElementById('sales-dashboard').classList.add('active');
+                updateSalesDashboard(user);
+            }
+        });
+
+        // Update Admin Dashboard with user info
+        function updateAdminDashboard(user) {
+            const avatar = document.getElementById('admin-avatar');
+            const nameEl = document.getElementById('admin-name');
+            
+            avatar.textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+            nameEl.textContent = user.name;
+            
+            // Add user creation functionality
+            const createUserForm = document.querySelector('#create-user-form');
+            if (createUserForm) {
+                createUserForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = this.querySelector('input[type="text"]').value;
+                    const email = this.querySelector('input[type="email"]').value;
+                    const role = this.querySelector('select').value;
+                    
+                    // Generate temporary password
+                    const tempPassword = generateTempPassword();
+                    
+                    // Create new user
+                    const newUser = {
+                        id: Date.now(),
+                        name,
+                        email,
+                        password: tempPassword,
+                        role,
+                        createdBy: user.id,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    users.push(newUser);
+                    localStorage.setItem('crm_users', JSON.stringify(users));
+                    
+                    showNotification(`Account created for ${name} (${role}) with temp password: ${tempPassword}`, "success");
+                    this.reset();
+                });
+            }
+            
+            // Add lead assignment functionality
+            document.querySelectorAll('.assign-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showNotification("Lead assigned to sales team successfully!", "success");
+                    // Change button text and style
+                    this.textContent = "Assigned";
+                    this.classList.remove('hover:text-secondary');
+                    this.classList.add('text-green-600', 'hover:text-green-800');
+                });
+            });
+            
+            // Lead detail functionality
+            document.querySelectorAll('.lead-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    document.getElementById('lead-detail-placeholder').classList.add('hidden');
+                    document.getElementById('lead-detail-content').classList.remove('hidden');
+                });
+            });
+        }
+
+        // Generate temporary password
+        function generateTempPassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let password = '';
+            for (let i = 0; i < 8; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        }
+
+        // Show notification function
+        function showNotification(message, type = "success") {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 bg-${type === "success" ? "green" : "red"}-100 text-${type === "success" ? "green" : "red"}-800 shadow-lg rounded-lg p-4 max-w-sm z-50`;
+            notification.innerHTML = `
+                <div class="flex items-start">
+                    <div class="mr-3">
+                        <i class="fas fa-${type === "success" ? "check-circle" : "exclamation-triangle"}"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium">${type === "success" ? "Success" : "Error"}</p>
+                        <p class="text-sm mt-1">${message}</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Navigation between pages
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active', 'text-primary', 'bg-teal-50');
+                    nav.classList.add('text-gray-600', 'hover:bg-gray-50');
+                });
+                
+                // Add active class to clicked nav item
+                this.classList.add('active', 'text-primary', 'bg-teal-50');
+                
+                // Get the target page from data-page attribute
+                const targetPage = this.getAttribute('data-page');
+                
+                // Hide all pages in current dashboard
+                const dashboard = this.closest('.page');
+                dashboard.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show target page
+                document.getElementById(targetPage + '-page').classList.add('active');
+            });
+        });
+        
+        // Back to dashboard functionality
+        document.querySelectorAll('#back-to-dashboard').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Hide all pages
+                const dashboard = this.closest('.page');
+                dashboard.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show dashboard page
+                document.getElementById('dashboard-page').classList.add('active');
+                
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active', 'text-primary', 'bg-teal-50');
+                    nav.classList.add('text-gray-600', 'hover:bg-gray-50');
+                });
+                document.querySelector('[data-page="dashboard"]').classList.add('active', 'text-primary', 'bg-teal-50');
+            });
+        });
+        
+        // Notification toggle
+        document.querySelectorAll('#notification-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const dropdown = this.nextElementSibling;
+                if(dropdown) dropdown.classList.toggle('hidden');
+            });
+        });
+        
+        // Logout functionality
+        document.querySelectorAll('#logout-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Hide all dashboards
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                // Show login page
+                document.getElementById('auth-container').style.display = 'flex';
+                loginTab.click();
+                currentUser = null;
+            });
+        });
+        
+        // Toggle sidebar on mobile
+        document.querySelectorAll('.sidebar-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sidebar = this.closest('.page').querySelector('.sidebar');
+                sidebar.classList.toggle('active');
+            });
+        });
+        
+        // Initialize with a default admin account if no users exist
+        if (users.length === 0) {
+            users.push({
+                id: 1,
+                name: "Admin User",
+                email: "admin@realty.com",
+                password: "admin123",
+                role: "admin",
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem('crm_users', JSON.stringify(users));
+        }
+    </script>
+</body>
+</html>
